@@ -18,8 +18,13 @@
         <div style="text-align:center;color:var(--muted)">Bienvenue sur ABS Market</div>
         <div class="loader-dots"><span></span><span></span><span></span></div>
     </div>
-
+    <div id="announcementBar" class="announcement-wrapper">
+        <div class="announcement-content" id="announcementText">
+            Chargement de l'annonce...
+        </div>
+    </div>
     <header class="app-header">
+
         <div class="brand">
             <div class="mini">ABS</div>
             <div>
@@ -46,6 +51,36 @@
         <div class="circle-btn" id="drawerToggleBtn" title="Menu utilisateur">
             <img id="miniLogo" src="https://api.dicebear.com/6.x/initials/svg?seed=ABS" alt="logo"
                 style="width:38px;height:38px;border-radius:50%;" />
+        </div>
+        <div class="circle-btn" id="drawerToggleBtnOders" title="Menu utilisateur">
+            <img id="miniLogoOders" src="https://api.dicebear.com/6.x/initials/svg?seed=S" alt="logo"
+                style="width:38px;height:38px;border-radius:50%;" />
+        </div>
+    </div>
+
+    <!-- MODAL PREMIUM -->
+    <div id="premiumModal" class="modal-overlay">
+        <div class="modal-content">
+            <label class="modal-label">Nom & Prénoms</label>
+            <input type="text" id="modalName" class="modal-input" placeholder="Ex : Karim Akakpo">
+
+            <label class="modal-label">Numéro WhatsApp</label>
+            <input type="tel" id="modalPhone" class="modal-input" placeholder="Ex : +229 01 67 69 81 91">
+
+            <label class="modal-label">Description</label>
+            <textarea id="modalDesc" class="modal-textarea" placeholder="Décrivez ce que vous voulez..."></textarea>
+
+            <label class="modal-label">Fichier (optionnel)</label>
+            <div class="file-box">
+                <input type="file" id="modalFile" accept="image/*,video/*,application/pdf">
+                <span class="file-icon">📎</span>
+                <span id="fileName">Aucun fichier choisi</span>
+            </div>
+            <div style="display: flex;">
+                <button id="modalSubmit" class="modal-btn">Envoyer</button>
+                <button id="modalClose" class="modal-close" style="color: white;">Fermer</button>
+            </div>
+
         </div>
     </div>
 
@@ -167,17 +202,93 @@
                         <textarea id="prodDesc" placeholder="Description" rows="3"></textarea>
                     </div>
                     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+                        <button class="btn ghost" id="openAnnouncementBtn">Modifier l'annonce</button>
                         <button class="btn ghost" id="clearForm">Réinitialiser</button>
                         <button class="btn primary" id="saveProduct">Enregistrer</button>
                     </div>
                 </div>
-
                 <div style="max-height:320px;overflow:auto;padding-top:8px">
                     <div id="adminProductsList"></div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- MODAL ANNONCE -->
+    <div id="announcementModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+     display:none;align-items:center;justify-content:center;z-index:9999;">
+
+        <div style="
+        width:90%;
+        max-width:420px;
+        background:rgba(255,255,255,0.06);
+        backdrop-filter:blur(18px);
+        border:1px solid rgba(255,255,255,0.15);
+        border-radius:18px;
+        padding:24px;
+        color:#fff;
+        box-shadow:0 8px 30px rgba(0,0,0,0.35);
+        animation:fadeIn 0.3s ease;">
+
+            <h2 style="font-size:20px;font-weight:700;margin-bottom:15px;text-align:center;">
+                📰 Mettre à jour l'annonce
+            </h2>
+
+            <!-- TEXTAREA -->
+            <textarea id="adminAnnouncement" placeholder="Écris ton annonce ici..." style="
+                width:100%;
+                height:120px;
+                border-radius:12px;
+                padding:12px;
+                font-size:15px;
+                resize:none;
+                outline:none;
+                color:#fff;
+                border:1px solid rgba(255,255,255,0.13);
+                background:rgba(255,255,255,0.05);
+            "></textarea>
+
+            <!-- BUTTONS -->
+            <div style="display:flex;justify-content:space-between;margin-top:18px;">
+                <button id="closeAnnouncementModal" style="
+                padding:10px 18px;
+                border-radius:10px;
+                border:none;
+                background:rgba(255,255,255,0.15);
+                color:#fff;
+                cursor:pointer;
+            ">
+                    Annuler
+                </button>
+
+                <button id="saveAnnouncement" style="
+                padding:10px 18px;
+                border-radius:10px;
+                border:none;
+                background:#1a73e8;
+                color:#fff;
+                cursor:pointer;
+                font-weight:600;
+            ">
+                    Enregistrer
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
 
     <!-- Firebase SDK (v9 modular) -->
     <script type="module">
@@ -199,7 +310,8 @@
             push,
             set,
             update,
-            remove
+            remove,
+            get
         } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js';
 
         // ----- Remplace par ta config Firebase -----
@@ -218,7 +330,7 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
-
+        const announcementRef = ref(db, "announcement");
         // ---------- Refs DOM ----------
         const carousel = document.getElementById('carousel');
         const modalBackdrop = document.getElementById('modalBackdrop');
@@ -449,11 +561,13 @@
                 if (modalBackdrop) modalBackdrop.classList.add('show');
             }
             if (a === 'order') {
+                const username = localStorage.getItem("username")
+                const email = localStorage.getItem("email")
                 const msgRaw = `Bonjour ABS market 👋,
-
+                ${username ? ` *• Voici mon Nom :* ${username}` : "Anonyme"}
+                 ${email ? `*• Voici mon email :* ${email}` : "Anonyme"}
                 Je souhaite passer une commande sur votre boutique en ligne.  
                 Voici les détails du produit :
-
                 *• Produit :* ${product.title}
                 *• Prix :* ${product.price}
                 *• Image :* ${product.img}
@@ -533,22 +647,24 @@
             div.className = 'auth-block';
 
             if (user) {
+                localStorage.setItem("username", user.displayName)
+                localStorage.setItem("email", user.email)
                 const photo = user.photoURL || `https://api.dicebear.com/6.x/identicon/svg?seed=${user.uid}`;
                 div.innerHTML = `
-        <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
-          <div style="display:flex;gap:12px;align-items:center">
-            <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
-            <div>
-              <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
-              <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
-            </div>
-          </div>
-          <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center">
-            <div style="display:flex;gap:8px"><button class='btn ghost' id='openAdminBtn'>Admin: Gérer produits</button></div>
-            <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
-          </div>
-        </div>
-      `;
+                <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
+                <div style="display:flex;gap:12px;align-items:center">
+                    <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
+                    <div>
+                    <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
+                    <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
+                    </div>
+                </div>
+                <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center">
+                    <div style="display:flex;gap:8px"><button class='btn ghost' id='openAdminBtn'>Admin: Gérer produits</button></div>
+                    <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
+                </div>
+                </div>
+            `;
                 authBlockPlaceholder.appendChild(div);
 
                 // attach logout and admin buttons (delegated safe way)
@@ -659,7 +775,74 @@
                 fire(err.message || 'Erreur lors de la sauvegarde produit', 'error');
             }
         });
+        const modal = document.getElementById("premiumModal");
+        const btnOpen = document.getElementById("drawerToggleBtnOders");
+        const btnClose = document.getElementById("modalClose");
 
+        btnOpen.onclick = () => modal.style.display = "flex";
+        btnClose.onclick = () => modal.style.display = "none";
+
+        window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+
+        // FILE PICKER
+        const fileInput = document.getElementById("modalFile");
+        const fileIcon = document.querySelector(".file-icon");
+        const fileName = document.getElementById("fileName");
+
+        fileIcon.onclick = () => fileInput.click();
+
+        fileInput.onchange = () => {
+            fileName.textContent = fileInput.files[0]?.name || "Aucun fichier choisi";
+        };
+
+        // SUBMIT
+        document.getElementById("modalSubmit").onclick = async () => {
+
+            const name = document.getElementById("modalName").value.trim();
+            const phone = document.getElementById("modalPhone").value.trim();
+            const desc = document.getElementById("modalDesc").value.trim();
+            const file = fileInput.files[0];
+
+            if (!name || !phone || !desc) {
+                alert("Veuillez remplir tous les champs obligatoires.");
+                return;
+            }
+
+            let fileURL = "";
+
+            if (file) {
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("upload_preset", UPLOAD_PRESET);
+
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+                    method: "POST",
+                    body: fd
+                });
+
+                const data = await res.json();
+                fileURL = data.secure_url;
+            }
+
+            const text = `
+            *Nouvelle demande client*
+
+            👤 *Nom:* ${name}
+            📞 *Contact:* ${phone}
+
+            📝 *Description:*
+            ${desc}
+
+            ${fileURL ? `📎 *Fichier:* ${fileURL}` : ""}
+            `;
+
+            const msg = encodeURIComponent(text);
+            const admin = "2290167698191";
+
+            window.open(`https://wa.me/${admin}?text=${msg}`, "_blank");
+
+            modal.style.display = "none";
+        };
         // Handle admin list clicks (edit/delete) - single listener
         if (adminProductsList) adminProductsList.addEventListener('click', (e) => {
             const btn = e.target.closest ? e.target.closest('[data-admin]') : null;
@@ -714,6 +897,67 @@
         setTimeout(() => { const w = document.getElementById('welcome'); if (w) w.style.display = 'none'; }, 3000);
 
         // End module
+        const adminAnnouncement = document.getElementById('adminAnnouncement');
+        const saveAnnouncement = document.getElementById('saveAnnouncement');
+
+        // Sauvegarde
+        saveAnnouncement.addEventListener("click", async () => {
+            const text = adminAnnouncement.value.trim();
+
+            if (!text) {
+                fire("L'annonce ne peut pas être vide", "warning");
+                return;
+            }
+
+            try {
+                await set(announcementRef, {
+                    text,
+                    date: Date.now()
+                });
+
+                fire("Annonce enregistrée avec succès !", "success");
+            } catch (err) {
+                console.error(err);
+                fire("Erreur lors de l’enregistrement", "error");
+            }
+        });
+        const announcementModal = document.getElementById("announcementModal");
+        const openAnnouncementBtn = document.getElementById("openAnnouncementBtn");
+        const closeAnnouncementBtn = document.getElementById("closeAnnouncementModal");
+
+        // Ouvrir
+        if (openAnnouncementBtn) {
+            openAnnouncementBtn.addEventListener("click", () => {
+                announcementModal.style.display = "flex";
+            });
+        }
+
+        // Fermer
+        closeAnnouncementBtn.addEventListener("click", () => {
+            announcementModal.style.display = "none";
+        });
+
+        // Fermer en cliquant en dehors
+        announcementModal.addEventListener("click", (e) => {
+            if (e.target === announcementModal) {
+                announcementModal.style.display = "none";
+            }
+        });
+
+        const announcementText = document.getElementById("announcementText");
+
+        get(announcementRef).then(snap => {
+            if (snap.exists()) {
+                const txt = snap.val().text;
+
+                // Remplir le textarea du modal admin
+                adminAnnouncement.value = txt;
+
+                // Remplir le bandeau marquee premium
+                announcementText.textContent = "📢 " + txt + " • ";
+            }
+        });
+
     </script>
 
 
