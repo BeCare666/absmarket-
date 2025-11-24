@@ -14,7 +14,8 @@
 
 <body>
     <div class="welcome" id="welcome">
-        <div class="logo-circle">ABS<br>Market</div>
+        <div class="logo-circle"> <img src="img/absmarket_logo.jpg" alt=""
+                style="width: 23vh; height: 23vh; border-radius: 100%;"></div>
         <div style="text-align:center;color:var(--muted)">Bienvenue sur ABS Market</div>
         <div class="loader-dots"><span></span><span></span><span></span></div>
     </div>
@@ -26,7 +27,9 @@
     <header class="app-header">
 
         <div class="brand">
-            <div class="mini">ABS</div>
+            <div class="mini">
+                <img src="img/absmarket_logo.jpg" alt="" style="width: 8vh; height: 8vh; border-radius: 100%;">
+            </div>
             <div>
                 <div style="font-size:12px;color:var(--muted)">Marketplace</div>
                 <div style="font-weight:700">ABS Market</div>
@@ -90,7 +93,9 @@
                 <div class="left">
                     <div
                         style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#4f46e5);display:flex;align-items:center;justify-content:center;font-weight:800">
-                        ABS</div>
+                        <img src="img/absmarket_logo.jpg" alt=""
+                            style="width: 11vh; height: 11vh; border-radius: 100%;">
+                    </div>
                     <div>
                         <div style="font-weight:700">ABS Market</div>
                         <div style="color:var(--muted);font-size:13px">Votre marché en ligne</div>
@@ -581,7 +586,7 @@
                 Merci beaucoup pour votre professionnalisme 🙏`;
 
                 const msg = encodeURIComponent(msgRaw);
-                const phone = '2290167698191';
+                const phone = '2290164669774';
                 const url = `https://wa.me/${phone}?text=${msg}`;
                 window.open(url, '_blank');
             }
@@ -647,10 +652,12 @@
             div.className = 'auth-block';
 
             if (user) {
-                localStorage.setItem("username", user.displayName)
-                localStorage.setItem("email", user.email)
-                const photo = user.photoURL || `https://api.dicebear.com/6.x/identicon/svg?seed=${user.uid}`;
-                div.innerHTML = `
+                if (user.uid === "6GOCD0mAlBWEtXAteGwGjmRzIAZ2") {
+                    console.log("user connect", user)
+                    localStorage.setItem("username", user.displayName)
+                    localStorage.setItem("email", user.email)
+                    const photo = user.photoURL || `https://api.dicebear.com/6.x/identicon/svg?seed=${user.uid}`;
+                    div.innerHTML = `
                 <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
                 <div style="display:flex;gap:12px;align-items:center">
                     <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
@@ -665,28 +672,72 @@
                 </div>
                 </div>
             `;
-                authBlockPlaceholder.appendChild(div);
+                    authBlockPlaceholder.appendChild(div);
 
-                // attach logout and admin buttons (delegated safe way)
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) logoutBtn.addEventListener('click', async () => {
-                    try {
-                        await signOut(auth);
-                        fire('Déconnecté', 'success');
-                    } catch (err) {
-                        console.error(err);
-                        fire('Erreur lors de la déconnexion', 'error');
-                    }
-                });
+                    // attach logout and admin buttons (delegated safe way)
+                    const logoutBtn = document.getElementById('logoutBtn');
+                    if (logoutBtn) logoutBtn.addEventListener('click', async () => {
+                        try {
+                            await signOut(auth);
+                            fire('Déconnecté', 'success');
+                        } catch (err) {
+                            console.error(err);
+                            fire('Erreur lors de la déconnexion', 'error');
+                        }
+                    });
 
-                const openAdminBtn = document.getElementById('openAdminBtn');
-                if (openAdminBtn) openAdminBtn.addEventListener('click', () => {
-                    // NOTE: In production verify user role on server or via custom claims
-                    if (adminModal) adminModal.style.display = 'flex';
-                });
+                    const openAdminBtn = document.getElementById('openAdminBtn');
+                    if (openAdminBtn) openAdminBtn.addEventListener('click', () => {
+                        // NOTE: In production verify user role on server or via custom claims
+                        if (adminModal) adminModal.style.display = 'flex';
+                    });
 
-                const avatarEl = document.getElementById('userAvatar');
-                if (avatarEl) avatarEl.src = photo;
+                    const avatarEl = document.getElementById('userAvatar');
+                    if (avatarEl) avatarEl.src = photo;
+
+                } else {
+                    console.log("user connect", user)
+                    localStorage.setItem("username", user.displayName)
+                    localStorage.setItem("email", user.email)
+                    const photo = user.photoURL || `https://api.dicebear.com/6.x/identicon/svg?seed=${user.uid}`;
+                    div.innerHTML = `
+                <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
+                <div style="display:flex;gap:12px;align-items:center">
+                    <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
+                    <div>
+                    <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
+                    <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
+                    </div>
+                </div>
+                <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center"> 
+                    <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
+                </div>
+                </div>
+            `;
+                    authBlockPlaceholder.appendChild(div);
+
+                    // attach logout and admin buttons (delegated safe way)
+                    const logoutBtn = document.getElementById('logoutBtn');
+                    if (logoutBtn) logoutBtn.addEventListener('click', async () => {
+                        try {
+                            await signOut(auth);
+                            fire('Déconnecté', 'success');
+                        } catch (err) {
+                            console.error(err);
+                            fire('Erreur lors de la déconnexion', 'error');
+                        }
+                    });
+
+                    const openAdminBtn = document.getElementById('openAdminBtn');
+                    if (openAdminBtn) openAdminBtn.addEventListener('click', () => {
+                        // NOTE: In production verify user role on server or via custom claims
+                        if (adminModal) adminModal.style.display = 'flex';
+                    });
+
+                    const avatarEl = document.getElementById('userAvatar');
+                    if (avatarEl) avatarEl.src = photo;
+                }
+
             } else {
                 div.innerHTML = `
                 <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px;display:flex;flex-direction:column;gap:8px">
@@ -837,7 +888,7 @@
             `;
 
             const msg = encodeURIComponent(text);
-            const admin = "2290167698191";
+            const admin = "2290164669774";
 
             window.open(`https://wa.me/${admin}?text=${msg}`, "_blank");
 
