@@ -98,7 +98,16 @@
                                 class="fa-brands fa-youtube fa-lg"></i></a>
                     </div>
                 </div>
-                <div style="color:var(--muted);font-size:13px">© ABS Market</div>
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <div style="color:var(--muted); font-size:13px;">
+                        © ABS Market
+                    </div>
+                    <div style="color:var(--muted); font-size:13px; color:#ff7aa8; cursor: pointer;"
+                        id="closeTheDrawer">
+                        Fermer
+                    </div>
+                </div>
+
             </div>
         </div>
     </aside>
@@ -402,7 +411,10 @@
                 toggleDrawer(false);
             }
         });
-
+        // To close drawer
+        document.getElementById('closeTheDrawer').addEventListener('click', function () {
+            toggleDrawer(false);
+        })
         // Listen for products changes (real-time)
         onValue(productsRef, (snapshot) => {
             const data = snapshot.val() || {};
