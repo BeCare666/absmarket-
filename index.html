@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ABS Market — Landing (Realtime DB + Admin)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <div class="welcome" id="welcome">
+        <div class="logo-circle">ABS<br>Market</div>
+        <div style="text-align:center;color:var(--muted)">Bienvenue sur ABS Market</div>
+        <div class="loader-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <header class="app-header">
+        <div class="brand">
+            <div class="mini">ABS</div>
+            <div>
+                <div style="font-size:12px;color:var(--muted)">Marketplace</div>
+                <div style="font-weight:700">ABS Market</div>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+            <div class="userbox">
+                <button id="drawerBtn" class="btn ghost" title="Menu"><i class="fa fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="hero" id="app">
+        <section style="max-width:1200px;margin:0 auto;width:100%">
+
+            <div class="product-carousel" id="carousel"></div>
+        </section>
+    </main>
+
+    <div class="fixed-search">
+        <input id="search" placeholder="Rechercher un produit, ex: 'huile de palme'" />
+        <div class="circle-btn" id="drawerToggleBtn" title="Menu utilisateur">
+            <img id="miniLogo" src="https://api.dicebear.com/6.x/initials/svg?seed=ABS" alt="logo"
+                style="width:38px;height:38px;border-radius:50%;" />
+        </div>
+    </div>
+
+    <aside class="drawer" id="drawer">
+        <div>
+            <div class="head">
+                <div class="left">
+                    <div
+                        style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#4f46e5);display:flex;align-items:center;justify-content:center;font-weight:800">
+                        ABS</div>
+                    <div>
+                        <div style="font-weight:700">ABS Market</div>
+                        <div style="color:var(--muted);font-size:13px">Votre marché en ligne</div>
+                    </div>
+                </div>
+                <div id="userAvatarWrap" style="display:flex;align-items:center;gap:10px">
+                    <img id="userAvatar" src="https://api.dicebear.com/6.x/micah/svg?seed=visitor" alt="avatar"
+                        style="width:44px;height:44px;border-radius:50%;" />
+                </div>
+            </div>
+
+            <nav class="nav" id="drawerNav">
+                <a href="index.html">Accueil</a>
+                <a href="apropos.html">À propos</a>
+                <a href="services.html">Nos services</a>
+                <a href="termes.html">Termes et conditions</a>
+                <a href="confidentienlite.html">Politique de confidentialité</a>
+                <a href="soumettre-produit.html">Soumettre un produit</a>
+            </nav>
+
+            <div id="authBlockPlaceholder"></div>
+
+        </div>
+
+        <div>
+            <div
+                style="padding-top:12px;border-top:1px dashed rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div style="color:var(--muted)">Contactez-nous</div>
+                    <div class="socials">
+                        <a href="#" title="Facebook" style="text-decoration:none;color:var(--muted)"><i
+                                class="fa-brands fa-facebook fa-lg"></i></a>
+                        <a href="#" title="TikTok" style="text-decoration:none;color:var(--muted)"><i
+                                class="fa-brands fa-tiktok fa-lg"></i></a>
+                        <a href="#" title="WhatsApp" style="text-decoration:none;color:var(--muted)"><i
+                                class="fa-brands fa-whatsapp fa-lg"></i></a>
+                        <a href="#" title="Instagram" style="text-decoration:none;color:var(--muted)"><i
+                                class="fa-brands fa-instagram fa-lg"></i></a>
+                        <a href="#" title="YouTube" style="text-decoration:none;color:var(--muted)"><i
+                                class="fa-brands fa-youtube fa-lg"></i></a>
+                    </div>
+                </div>
+                <div style="color:var(--muted);font-size:13px">© ABS Market</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Product details modal -->
+    <div class="modal-backdrop" id="modalBackdrop">
+        <div class="modal" id="modal">
+            <h3 id="modalTitle">Détails produit</h3>
+            <p id="modalDesc" style="color:var(--muted)"></p>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
+                <button class="btn ghost" id="closeModal">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal-backdrop" id="authModal" style="display:none;align-items:center;justify-content:center;">
+        <div class="modal" style="max-width:420px">
+            <h3 id="authTitle">Se connecter / S'enregistrer</h3>
+            <div class="auth-form">
+                <input id="authName" placeholder="Nom (pour inscription)" />
+                <input id="authEmail" placeholder="Email" />
+                <input id="authPassword" type="password" placeholder="Mot de passe" />
+                <div style="display:flex;gap:8px;justify-content:flex-end">
+                    <button class="btn ghost" id="closeAuth">Annuler</button>
+                    <button class="btn primary" id="signUpBtn">S'enregistrer</button>
+                    <button class="btn primary" id="signInBtn">Se connecter</button>
+                </div>
+                <div style="display:flex;gap:8px;justify-content:center;margin-top:8px; display:none">
+                    <button class="btn ghost" id="googleSignIn"><i class="fa-brands fa-google"></i> Google</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin modal for product management -->
+    <div class="modal-backdrop" id="adminModal" style="display:none;align-items:center;justify-content:center;">
+        <div class="admin-modal">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <h3 style="margin:0">Admin — Gérer les produits</h3>
+                <div>
+                    <button class="btn ghost" id="closeAdmin">Fermer</button>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-direction:column">
+                <div style="background:rgba(255,255,255,0.02);padding:12px;border-radius:12px">
+                    <div class="form-row">
+                        <input id="prodTitle" placeholder="Titre du produit" />
+                        <input id="prodPrice" placeholder="Prix (ex: 3500 XOF)" />
+                    </div>
+                    <div class="form-row" style="margin-top:8px">
+                        <input type="file" id="prodImgFile" accept="image/*" />
+                        <input type="text" id="prodImg" placeholder="URL image (auto)" readonly />
+                    </div>
+                    <div class="form-row" style="margin-top:8px">
+                        <textarea id="prodDesc" placeholder="Description" rows="3"></textarea>
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+                        <button class="btn ghost" id="clearForm">Réinitialiser</button>
+                        <button class="btn primary" id="saveProduct">Enregistrer</button>
+                    </div>
+                </div>
+
+                <div style="max-height:320px;overflow:auto;padding-top:8px">
+                    <div id="adminProductsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (v9 modular) -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
+        import {
+            getAuth,
+            onAuthStateChanged,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            GoogleAuthProvider,
+            signInWithPopup,
+            updateProfile
+        } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
+        import {
+            getDatabase,
+            ref,
+            onValue,
+            push,
+            set,
+            update,
+            remove
+        } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js';
+
+        // ----- Remplace par ta config Firebase -----
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6_wToNUlybbKfXNaeEMb7r_F0dtNFV_E",
+            authDomain: "absmarket-1539d.firebaseapp.com",
+            databaseURL: "https://absmarket-1539d-default-rtdb.firebaseio.com",
+            projectId: "absmarket-1539d",
+            storageBucket: "absmarket-1539d.firebasestorage.app",
+            messagingSenderId: "327768103316",
+            appId: "1:327768103316:web:494564d5ecb6a0b74c5781",
+            measurementId: "G-ZPWGE9KVMW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const provider = new GoogleAuthProvider();
+
+        // ---------- Refs DOM ----------
+        const carousel = document.getElementById('carousel');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const closeModal = document.getElementById('closeModal');
+        const drawer = document.getElementById('drawer');
+        const drawerBtn = document.getElementById('drawerBtn');
+        const drawerToggleBtn = document.getElementById('drawerToggleBtn');
+        const welcome = document.getElementById('welcome');
+        const searchInput = document.getElementById('search');
+        const authBlockPlaceholder = document.getElementById('authBlockPlaceholder');
+        const authModal = document.getElementById('authModal');
+        const authName = document.getElementById('authName');
+        const authEmail = document.getElementById('authEmail');
+        const authPassword = document.getElementById('authPassword');
+        const signUpBtn = document.getElementById('signUpBtn');
+        const signInBtn = document.getElementById('signInBtn');
+        const closeAuth = document.getElementById('closeAuth');
+        const googleSignIn = document.getElementById('googleSignIn');
+
+        // Admin
+        const adminModal = document.getElementById('adminModal');
+        const closeAdmin = document.getElementById('closeAdmin');
+        const saveProduct = document.getElementById('saveProduct');
+        const clearForm = document.getElementById('clearForm');
+        const prodTitle = document.getElementById('prodTitle');
+        const prodPrice = document.getElementById('prodPrice');
+        const prodImg = document.getElementById('prodImg');
+        const prodImgFile = document.getElementById("prodImgFile");
+        const prodDesc = document.getElementById('prodDesc');
+        const adminProductsList = document.getElementById('adminProductsList');
+
+        let editingProductId = null; // when editing existing product
+        let allProducts = {};
+
+        // --------- Realtime DB path for products ---------
+        const productsRef = ref(db, 'products');
+
+        // ---------- Small utilities ----------
+        function fire(message = '', icon = 'info') {
+            // Utility wrapper for SweetAlert2 — assumes Swal is loaded globally.
+            // icon: 'success' | 'error' | 'warning' | 'info' | 'question'
+            if (window.Swal && typeof Swal.fire === 'function') {
+                Swal.fire({ text: message, icon, toast: true, position: 'top-end', timer: 2500, showConfirmButton: false });
+            } else {
+                // Fallback: console + alert
+                console[icon === 'error' ? 'error' : 'log'](message);
+                // don't spam alert in fallback; only show for errors
+                if (icon === 'error') alert(message);
+            }
+        }
+
+        // Utility: escape HTML to avoid injection
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, (s) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[s]);
+        }
+
+        // IntersectionObserver for lazy images
+        let lazyObserver;
+        function observeLazyImages() {
+            const lazyImages = document.querySelectorAll('img.lazy');
+            if ('IntersectionObserver' in window) {
+                if (!lazyObserver) {
+                    lazyObserver = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const img = entry.target;
+                                img.src = img.dataset.src;
+                                img.classList.remove('lazy');
+                                lazyObserver.unobserve(img);
+                            }
+                        });
+                    }, { rootMargin: '200px' });
+                }
+                lazyImages.forEach(img => lazyObserver.observe(img));
+            } else {
+                lazyImages.forEach(img => img.src = img.dataset.src);
+            }
+        }
+
+        // Render products to carousel
+        function renderProducts(list) {
+            if (!carousel) return;
+            carousel.innerHTML = '';
+
+            list.forEach(p => {
+                const card = document.createElement('article');
+                card.className = 'card';
+
+                const title = escapeHtml(p.title);
+                const desc = escapeHtml(p.desc || '');
+                const truncated = desc.substring(0, 90) + (desc.length > 90 ? '...' : '');
+                const price = escapeHtml(p.price);
+                const img = p.img || '';
+
+                card.innerHTML = `
+                    <div class="media" style="--bg:url('${img}')">
+                        <img class="lazy" data-src="${img}" alt="${title}" loading="lazy"/>
+                    </div>
+
+                    <div>
+                        <h3>${title}</h3>
+                        <div style="color:var(--muted);font-size:13px;margin-top:6px">${truncated}</div>
+
+                        <!-- 🔥 Ajout des deux icônes -->
+                        <div class="product-icons" style="display:flex;gap:14px;margin-top:10px;color:var(--muted);font-size:13px">
+                            <div style="display:flex;align-items:center;gap:6px">
+                                <i class="fa fa-truck-fast"></i> Livraison rapide
+                            </div>
+                            <div style="display:flex;align-items:center;gap:6px">
+                                <i class="fa fa-lock"></i> Paiement sécurisé
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+                        <div class="price">${price} FCFA</div>
+                        <div style="display:flex;gap:8px">
+                            <button class="btn ghost" data-id="${p.id}" data-action="details" style="display:none">
+                                <i class="fa fa-eye"></i> Détails
+                            </button>
+                            <button class="btn primary" data-id="${p.id}" data-action="order">
+                                <i class="fa fa-paper-plane"></i> Commander
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                carousel.appendChild(card);
+            });
+
+            observeLazyImages();
+        }
+
+        // Render admin list
+        function renderAdminList(list) {
+            if (!adminProductsList) return;
+            adminProductsList.innerHTML = '';
+            if (!list || list.length === 0) {
+                adminProductsList.innerHTML = '<div style="color:var(--muted)">Aucun produit</div>';
+                return;
+            }
+            list.forEach(p => {
+                const item = document.createElement('div');
+                item.style.padding = '8px';
+                item.style.borderRadius = '10px';
+                item.style.display = 'flex';
+                item.style.justifyContent = 'space-between';
+                item.style.alignItems = 'center';
+                item.style.marginBottom = '8px';
+                item.style.background = 'rgba(255,255,255,0.02)';
+                const title = escapeHtml(p.title);
+                const price = escapeHtml(p.price);
+                const img = p.img || '';
+                item.innerHTML = `
+        <div style='display:flex;gap:12px;align-items:center'>
+          <img src='${img}' style='width:56px;height:40px;object-fit:cover;border-radius:8px' loading='lazy'/>
+          <div>
+            <strong>${title}</strong>
+            <div style='color:var(--muted);font-size:12px'>${price}  FCFA</div>
+          </div>
+        </div>
+        <div style='display:flex;gap:8px'>
+          <button class='btn ghost' data-id='${p.id}' data-admin='edit'>Modifier</button>
+          <button class='btn ghost' data-id='${p.id}' data-admin='del'><i class='fa fa-trash'></i></button>
+        </div>
+      `;
+                adminProductsList.appendChild(item);
+            });
+        }
+
+        // Clear admin form
+        function clearAdminForm() {
+            editingProductId = null;
+            if (prodTitle) prodTitle.value = '';
+            if (prodPrice) prodPrice.value = '';
+            if (prodImg) prodImg.value = '';
+            if (prodDesc) prodDesc.value = '';
+        }
+
+        // Drawer toggle
+        function toggleDrawer(open) { if (!drawer) return; drawer.classList.toggle('open', open); }
+        if (drawerBtn) drawerBtn.addEventListener('click', () => toggleDrawer(true));
+        if (drawerToggleBtn) drawerToggleBtn.addEventListener('click', () => toggleDrawer(true));
+        document.addEventListener('click', (e) => {
+            if (!drawer || !drawerBtn || !drawerToggleBtn) return;
+            if (!drawer.contains(e.target) && !drawerBtn.contains(e.target) && !drawerToggleBtn.contains(e.target)) {
+                toggleDrawer(false);
+            }
+        });
+
+        // Listen for products changes (real-time)
+        onValue(productsRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            allProducts = data;
+            const list = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            renderProducts(list);
+            renderAdminList(list);
+        }, (err) => {
+            console.error('DB read error', err);
+            fire('Impossible de charger les produits', 'error');
+        });
+
+        // Modal controls (delegated from product buttons)
+        document.addEventListener('click', (e) => {
+            const action = e.target.closest ? e.target.closest('[data-action]') : null;
+            if (!action) return;
+            const id = action.getAttribute('data-id');
+            const a = action.getAttribute('data-action');
+            const product = allProducts[id];
+            if (!product) {
+                fire('Produit introuvable', 'error');
+                return;
+            }
+            if (a === 'details') {
+                if (modalTitle) modalTitle.textContent = `${product.title} — ${product.price}`;
+                if (modalDesc) modalDesc.innerHTML = `
+        <div style="margin-bottom:8px">
+          <img src="${product.img}" alt="${escapeHtml(product.title)}" style="width:100%;height:220px;object-fit:cover;border-radius:8px;display:block;" loading="lazy">
+        </div>
+        <div style='color:var(--muted)'>${escapeHtml(product.desc || '')}</div>
+      `;
+                if (modalBackdrop) modalBackdrop.classList.add('show');
+            }
+            if (a === 'order') {
+                const msgRaw = `Bonjour ABS market 👋,
+
+                Je souhaite passer une commande sur votre boutique en ligne.  
+                Voici les détails du produit :
+
+                *• Produit :* ${product.title}
+                *• Prix :* ${product.price}
+                *• Image :* ${product.img}
+
+                Merci de bien vouloir me confirmer :  
+                – La disponibilité du produit  
+                – Le délai de livraison  
+                – Les options de paiement disponibles
+
+                Je reste joignable si besoin.  
+                Merci beaucoup pour votre professionnalisme 🙏`;
+
+                const msg = encodeURIComponent(msgRaw);
+                const phone = '2290167698191';
+                const url = `https://wa.me/${phone}?text=${msg}`;
+                window.open(url, '_blank');
+            }
+
+        });
+
+        if (closeModal) closeModal.addEventListener('click', () => modalBackdrop.classList.remove('show'));
+        if (modalBackdrop) modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) modalBackdrop.classList.remove('show'); });
+
+        // ---------- Auth handling (email/password + Google) ----------
+        if (closeAuth) closeAuth.addEventListener('click', () => { if (authModal) authModal.style.display = 'none'; });
+
+        // Sign up
+        if (signUpBtn) signUpBtn.addEventListener('click', async () => {
+            const email = authEmail ? authEmail.value.trim() : '';
+            const pass = authPassword ? authPassword.value : '';
+            const name = authName ? authName.value.trim() : '';
+            if (!email || !pass) { fire('Veuillez remplir tous les champs', 'warning'); return; }
+            try {
+                const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+                if (name) await updateProfile(userCred.user, { displayName: name }); signUpBtn
+                //if (authModal) authModal.style.display = 'none';
+                if (authModal) signUpBtn.style.display = 'none';
+                fire('Inscription réussie', 'success');
+            } catch (err) {
+                console.error(err);
+                fire(err.message || 'Erreur lors de l\'inscription', 'error');
+            }
+        });
+
+        // Sign in
+        if (signInBtn) signInBtn.addEventListener('click', async () => {
+            const email = authEmail ? authEmail.value.trim() : '';
+            const pass = authPassword ? authPassword.value : '';
+            if (!email || !pass) { fire('Veuillez remplir tous les champs', 'warning'); return; }
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                if (authModal) authModal.style.display = 'none';
+                fire('Connexion réussie', 'success');
+            } catch (err) {
+                console.error(err);
+                fire(err.message || 'Erreur lors de la connexion', 'error');
+            }
+        });
+
+        // Google sign-in
+        if (googleSignIn) googleSignIn.addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, provider);
+                if (authModal) authModal.style.display = 'none';
+                fire('Connexion Google réussie', 'success');
+            } catch (err) {
+                console.error(err);
+                fire(err.message || 'Erreur Google Sign-In', 'error');
+            }
+        });
+
+        // Render auth block in drawer
+        function renderAuthBlock(user) {
+            if (!authBlockPlaceholder) return;
+            authBlockPlaceholder.innerHTML = '';
+            const div = document.createElement('div');
+            div.className = 'auth-block';
+
+            if (user) {
+                const photo = user.photoURL || `https://api.dicebear.com/6.x/identicon/svg?seed=${user.uid}`;
+                div.innerHTML = `
+        <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
+          <div style="display:flex;gap:12px;align-items:center">
+            <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
+            <div>
+              <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
+              <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center">
+            <div style="display:flex;gap:8px"><button class='btn ghost' id='openAdminBtn'>Admin: Gérer produits</button></div>
+            <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
+          </div>
+        </div>
+      `;
+                authBlockPlaceholder.appendChild(div);
+
+                // attach logout and admin buttons (delegated safe way)
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) logoutBtn.addEventListener('click', async () => {
+                    try {
+                        await signOut(auth);
+                        fire('Déconnecté', 'success');
+                    } catch (err) {
+                        console.error(err);
+                        fire('Erreur lors de la déconnexion', 'error');
+                    }
+                });
+
+                const openAdminBtn = document.getElementById('openAdminBtn');
+                if (openAdminBtn) openAdminBtn.addEventListener('click', () => {
+                    // NOTE: In production verify user role on server or via custom claims
+                    if (adminModal) adminModal.style.display = 'flex';
+                });
+
+                const avatarEl = document.getElementById('userAvatar');
+                if (avatarEl) avatarEl.src = photo;
+            } else {
+                div.innerHTML = `
+                <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px;display:flex;flex-direction:column;gap:8px">
+                <button class='btn primary' id='openAuthBtn'>Se connecter / S'enregistrer</button>
+                </div>
+            `;
+                authBlockPlaceholder.appendChild(div);
+                const openAuthBtn = document.getElementById('openAuthBtn');
+                if (openAuthBtn) openAuthBtn.addEventListener('click', () => { if (authModal) authModal.style.display = 'flex'; });
+
+                const avatarEl = document.getElementById('userAvatar');
+                if (avatarEl) avatarEl.src = 'https://api.dicebear.com/6.x/micah/svg?seed=visitor';
+            }
+        }
+
+        // Listen auth changes
+        onAuthStateChanged(auth, (user) => {
+            renderAuthBlock(user);
+        });
+
+        // Admin modal events
+        if (closeAdmin) closeAdmin.addEventListener('click', () => { if (adminModal) adminModal.style.display = 'none'; clearAdminForm(); });
+        if (clearForm) clearForm.addEventListener('click', clearAdminForm);
+
+        // Save product (create or update)
+        // Cloudinary config
+        const CLOUD_NAME = "djxmuazeb";
+        const UPLOAD_PRESET = "hobefsjn";
+
+        // Upload auto
+        if (prodImgFile) {
+            prodImgFile.addEventListener("change", async () => {
+                const file = prodImgFile.files[0];
+                if (!file) return;
+
+                fire("Upload image en cours...", "info");
+
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", UPLOAD_PRESET);
+
+                try {
+                    const res = await fetch(
+                        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+                        { method: "POST", body: formData }
+                    );
+
+                    const data = await res.json();
+
+                    if (data.secure_url) {
+                        prodImg.value = data.secure_url;
+                        fire("Image uploadée avec succès !", "success");
+                    } else {
+                        throw new Error("Échec upload Cloudinary");
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    fire("Erreur upload image", "error");
+                }
+            });
+        }
+        if (saveProduct) saveProduct.addEventListener('click', async () => {
+            const title = prodTitle ? prodTitle.value.trim() : '';
+            const price = prodPrice ? prodPrice.value.trim() : '';
+            const img = prodImg ? prodImg.value.trim() : '';
+            const desc = prodDesc ? prodDesc.value.trim() : '';
+
+            if (!title || !price) { fire('Le titre et le prix sont requis', 'warning'); return; }
+
+            try {
+                if (editingProductId) {
+                    // update
+                    await update(ref(db, `products/${editingProductId}`), { title, price, img, desc });
+                    fire('Produit mis à jour', 'success');
+                } else {
+                    // create
+                    const newRef = push(productsRef);
+                    await set(newRef, { title, price, img, desc });
+                    fire('Produit créé', 'success');
+                }
+                if (adminModal) adminModal.style.display = 'none';
+                clearAdminForm();
+            } catch (err) {
+                console.error(err);
+                fire(err.message || 'Erreur lors de la sauvegarde produit', 'error');
+            }
+        });
+
+        // Handle admin list clicks (edit/delete) - single listener
+        if (adminProductsList) adminProductsList.addEventListener('click', (e) => {
+            const btn = e.target.closest ? e.target.closest('[data-admin]') : null;
+            if (!btn) return;
+            const id = btn.getAttribute('data-id');
+            const action = btn.getAttribute('data-admin');
+            if (action === 'edit') {
+                const p = allProducts[id];
+                if (!p) { fire('Produit introuvable', 'error'); return; }
+                editingProductId = id;
+                if (prodTitle) prodTitle.value = p.title || '';
+                if (prodPrice) prodPrice.value = p.price || '';
+                if (prodImg) prodImg.value = p.img || '';
+                if (prodDesc) prodDesc.value = p.desc || '';
+                if (adminModal) adminModal.style.display = 'flex';
+            }
+            if (action === 'del') {
+                if (confirm('Supprimer ce produit ?')) {
+                    remove(ref(db, `products/${id}`))
+                        .then(() => { fire('Produit supprimé', 'success'); })
+                        .catch(err => {
+                            console.error(err);
+                            fire('Erreur lors de la suppression', 'error');
+                        });
+                }
+            }
+        });
+
+        // Search filter (single listener)
+        if (searchInput) searchInput.addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase().trim();
+            const list = Object.keys(allProducts).map(key => ({ id: key, ...allProducts[key] }));
+            if (!q) return renderProducts(list);
+            const filtered = list.filter(p => ((p.title || '') + ' ' + (p.desc || '')).toLowerCase().includes(q));
+            renderProducts(filtered);
+        });
+
+        // Accessibility: keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (modalBackdrop) modalBackdrop.classList.remove('show');
+                toggleDrawer(false);
+                if (authModal) authModal.style.display = 'none';
+                if (adminModal) adminModal.style.display = 'none';
+            }
+        });
+
+        // Hide welcome after a bit
+        setTimeout(() => { if (welcome) welcome.style.display = 'none'; }, 1200);
+
+        // Fallback: in case welcome still visible later
+        setTimeout(() => { const w = document.getElementById('welcome'); if (w) w.style.display = 'none'; }, 3000);
+
+        // End module
+    </script>
+
+
+</body>
+
+</html>
