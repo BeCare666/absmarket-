@@ -697,7 +697,7 @@
                     const openAdminBtn = document.getElementById('openAdminBtn');
                     if (openAdminBtn) openAdminBtn.addEventListener('click', () => {
                         // NOTE: In production verify user role on server or via custom claims
-                        if (adminModal) adminModal.style.display = 'flex';
+                        if (adminModal) adminModal.classList.add('show');
                     });
 
                     const avatarEl = document.getElementById('userAvatar');
@@ -739,7 +739,7 @@
                     const openAdminBtn = document.getElementById('openAdminBtn');
                     if (openAdminBtn) openAdminBtn.addEventListener('click', () => {
                         // NOTE: In production verify user role on server or via custom claims
-                        if (adminModal) adminModal.style.display = 'flex';
+                        if (adminModal) adminModal.classList.add('show');
                     });
 
                     const avatarEl = document.getElementById('userAvatar');
@@ -774,7 +774,7 @@
         });
 
         // Admin modal events
-        if (closeAdmin) closeAdmin.addEventListener('click', () => { if (adminModal) adminModal.style.display = 'none'; clearAdminForm(); });
+        if (closeAdmin) closeAdmin.addEventListener('click', () => { if (adminModal) adminModal.classList.remove('show'); clearAdminForm(); });
         if (clearForm) clearForm.addEventListener('click', clearAdminForm);
 
         // Save product (create or update)
@@ -834,7 +834,7 @@
                     await set(newRef, { title, price, img, desc });
                     fire('Produit créé', 'success');
                 }
-                if (adminModal) adminModal.style.display = 'none';
+                if (adminModal) adminModal.classList.remove('show');
                 clearAdminForm();
             } catch (err) {
                 console.error(err);
@@ -923,7 +923,7 @@
                 if (prodPrice) prodPrice.value = p.price || '';
                 if (prodImg) prodImg.value = p.img || '';
                 if (prodDesc) prodDesc.value = p.desc || '';
-                if (adminModal) adminModal.style.display = 'flex';
+                if (adminModal) adminModal.classList.add('show');
             }
             if (action === 'del') {
                 if (confirm('Supprimer ce produit ?')) {
@@ -952,7 +952,7 @@
                 if (modalBackdrop) modalBackdrop.classList.remove('show');
                 toggleDrawer(false);
                 if (authModal) authModal.classList.remove('show');
-                if (adminModal) adminModal.style.display = 'none';
+                if (adminModal) adminModal.classList.remove('show');
             }
         });
 
