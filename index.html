@@ -67,10 +67,10 @@
     <div id="premiumModal" class="modal-overlay">
         <div class="modal-content">
             <label class="modal-label">Nom & Prénoms</label>
-            <input type="text" id="modalName" class="modal-input" placeholder="Ex : Karim Akakpo">
+            <input type="text" id="modalName" class="modal-input" placeholder="Ex : Cécile HOUNNOUSSA">
 
             <label class="modal-label">Numéro WhatsApp</label>
-            <input type="tel" id="modalPhone" class="modal-input" placeholder="Ex : +229 01 67 69 81 91">
+            <input type="tel" id="modalPhone" class="modal-input" placeholder="Ex : +229 01 64 66 97 74">
 
             <label class="modal-label">Description</label>
             <textarea id="modalDesc" class="modal-textarea" placeholder="Décrivez ce que vous voulez..."></textarea>
@@ -158,7 +158,11 @@
     <div class="modal-backdrop" id="modalBackdrop">
         <div class="modal" id="modal">
             <h3 id="modalTitle">Détails produit</h3>
-            <p id="modalDesc" style="color:var(--muted)"></p>
+            <div style="height:60vh; overflow-y:auto; scrollbar-width:none; -ms-overflow-style:none;">
+                <div id="modalDescx" style="color:var(--muted)">
+
+                </div>
+            </div>
             <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px">
                 <button class="btn ghost" id="closeModal">Fermer</button>
             </div>
@@ -343,6 +347,7 @@
         const modalBackdrop = document.getElementById('modalBackdrop');
         const modalTitle = document.getElementById('modalTitle');
         const modalDesc = document.getElementById('modalDesc');
+        const modalDescx = document.getElementById('modalDescx');
         const closeModal = document.getElementById('closeModal');
         const drawer = document.getElementById('drawer');
         const drawerBtn = document.getElementById('drawerBtn');
@@ -458,7 +463,7 @@
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
                         <div class="price">${price} FCFA</div>
                         <div style="display:flex;gap:8px">
-                            <button class="btn ghost" data-id="${p.id}" data-action="details" style="display:none">
+                            <button class="btn ghost" data-id="${p.id}" data-action="details">
                                 <i class="fa fa-eye"></i> Détails
                             </button>
                             <button class="btn primary" data-id="${p.id}" data-action="order">
@@ -558,13 +563,14 @@
                 return;
             }
             if (a === 'details') {
+
                 if (modalTitle) modalTitle.textContent = `${product.title} — ${product.price}`;
-                if (modalDesc) modalDesc.innerHTML = `
-        <div style="margin-bottom:8px">
-          <img src="${product.img}" alt="${escapeHtml(product.title)}" style="width:100%;height:220px;object-fit:cover;border-radius:8px;display:block;" loading="lazy">
-        </div>
-        <div style='color:var(--muted)'>${escapeHtml(product.desc || '')}</div>
-      `;
+                if (modalDescx) modalDescx.innerHTML = `
+                <div style="margin-bottom:8px">
+                <img src="${product.img}" alt="${escapeHtml(product.title)}" style="width:100%;height:220px;object-fit:cover;border-radius:8px;display:block;" loading="lazy">
+                </div>
+                <div style='color:var(--muted)'>${escapeHtml(product.desc)}</div>
+            `;
                 if (modalBackdrop) modalBackdrop.classList.add('show');
             }
             if (a === 'order') {
