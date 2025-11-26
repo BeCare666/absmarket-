@@ -190,8 +190,8 @@
     </div>
 
     <!-- Admin modal for product management -->
-    <div class="modal-backdrop" id="adminModal" style="display:none;align-items:center;justify-content:center;">
-        <div class="admin-modal">
+    <div class="modal-backdrop" id="adminModal" style="align-items:center;justify-content:center;">
+        <div class="admin-modal modal">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
                 <h3 style="margin:0">Admin — Gérer les produits</h3>
                 <div>
@@ -698,6 +698,7 @@
                     if (openAdminBtn) openAdminBtn.addEventListener('click', () => {
                         // NOTE: In production verify user role on server or via custom claims
                         if (adminModal) adminModal.classList.add('show');
+
                     });
 
                     const avatarEl = document.getElementById('userAvatar');
