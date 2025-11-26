@@ -170,7 +170,7 @@
     </div>
 
     <!-- Auth Modal -->
-    <div class="modal-backdrop" id="authModal" style="display:none;align-items:center;justify-content:center;">
+    <div class="modal-backdrop" id="authModal" style=" align-items:center;justify-content:center;z-index: 9999;">
         <div class="modal" style="max-width:420px">
             <h3 id="authTitle">Se connecter / S'enregistrer</h3>
             <div class="auth-form">
@@ -605,7 +605,7 @@
         if (modalBackdrop) modalBackdrop.addEventListener('click', (e) => { if (e.target === modalBackdrop) modalBackdrop.classList.remove('show'); });
 
         // ---------- Auth handling (email/password + Google) ----------
-        if (closeAuth) closeAuth.addEventListener('click', () => { if (authModal) authModal.style.display = 'none'; });
+        if (closeAuth) closeAuth.addEventListener('click', () => { if (authModal) authModal.classList.remove('show'); });
 
         // Sign up
         if (signUpBtn) signUpBtn.addEventListener('click', async () => {
@@ -632,7 +632,7 @@
             if (!email || !pass) { fire('Veuillez remplir tous les champs', 'warning'); return; }
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-                if (authModal) authModal.style.display = 'none';
+                if (authModal) authModal.classList.remove('show');
                 fire('Connexion réussie', 'success');
             } catch (err) {
                 console.error(err);
@@ -644,7 +644,7 @@
         if (googleSignIn) googleSignIn.addEventListener('click', async () => {
             try {
                 await signInWithPopup(auth, provider);
-                if (authModal) authModal.style.display = 'none';
+                if (authModal) authModal.classList.remove('show');
                 fire('Connexion Google réussie', 'success');
             } catch (err) {
                 console.error(err);
@@ -666,20 +666,20 @@
                     localStorage.setItem("email", user.email)
                     const photo = user.photoURL || `https://api.dicebear.com/6.x/identicon/svg?seed=${user.uid}`;
                     div.innerHTML = `
-                <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
-                <div style="display:flex;gap:12px;align-items:center">
-                    <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
-                    <div>
-                    <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
-                    <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
-                    </div>
-                </div>
-                <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center">
-                    <div style="display:flex;gap:8px"><button class='btn ghost' id='openAdminBtn'>Admin: Gérer produits</button></div>
-                    <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
-                </div>
-                </div>
-            `;
+                            <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
+                            <div style="display:flex;gap:12px;align-items:center">
+                                <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
+                                <div>
+                                <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
+                                <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
+                                </div>
+                            </div>
+                            <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center">
+                                <div style="display:flex;gap:8px"><button class='btn ghost' id='openAdminBtn'>Admin: Gérer produits</button></div>
+                                <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
+                            </div>
+                            </div>
+                        `;
                     authBlockPlaceholder.appendChild(div);
 
                     // attach logout and admin buttons (delegated safe way)
@@ -709,19 +709,19 @@
                     localStorage.setItem("email", user.email)
                     const photo = user.photoURL || `https://api.dicebear.com/6.x/identicon/svg?seed=${user.uid}`;
                     div.innerHTML = `
-                <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
-                <div style="display:flex;gap:12px;align-items:center">
-                    <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
-                    <div>
-                    <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
-                    <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
-                    </div>
-                </div>
-                <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center"> 
-                    <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
-                </div>
-                </div>
-            `;
+                        <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px">
+                        <div style="display:flex;gap:12px;align-items:center">
+                            <img src="${photo}" style="width:56px;height:56px;border-radius:50%"/>
+                            <div>
+                            <strong>${escapeHtml(user.displayName || 'Utilisateur')}</strong>
+                            <div style="color:var(--muted);font-size:12px">${escapeHtml(user.email || '')}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px;display:flex;gap:8px;justify-content:space-between;align-items:center"> 
+                            <div style="display:flex;gap:8px"><button class='btn ghost' id='logoutBtn'>Déconnexion</button></div>
+                        </div>
+                        </div>
+                    `;
                     authBlockPlaceholder.appendChild(div);
 
                     // attach logout and admin buttons (delegated safe way)
@@ -747,14 +747,21 @@
                 }
 
             } else {
+                console.log('je suis bien dans ce cas')
                 div.innerHTML = `
                 <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-top:12px;display:flex;flex-direction:column;gap:8px">
                 <button class='btn primary' id='openAuthBtn'>Se connecter / S'enregistrer</button>
                 </div>
             `;
+                const authModal = document.getElementById('authModal');
+                console.log(authModal)
                 authBlockPlaceholder.appendChild(div);
                 const openAuthBtn = document.getElementById('openAuthBtn');
-                if (openAuthBtn) openAuthBtn.addEventListener('click', () => { if (authModal) authModal.style.display = 'flex'; });
+                openAuthBtn.addEventListener('click', function () {
+                    console.log('oui je suis là')
+                    //authModal.style.display = 'flex';
+                    authModal.classList.add('show');
+                });
 
                 const avatarEl = document.getElementById('userAvatar');
                 if (avatarEl) avatarEl.src = 'https://api.dicebear.com/6.x/micah/svg?seed=visitor';
@@ -944,7 +951,7 @@
             if (e.key === 'Escape') {
                 if (modalBackdrop) modalBackdrop.classList.remove('show');
                 toggleDrawer(false);
-                if (authModal) authModal.style.display = 'none';
+                if (authModal) authModal.classList.remove('show');
                 if (adminModal) adminModal.style.display = 'none';
             }
         });
