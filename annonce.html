@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eBook Premium — Accueil</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card: #111828;
+            --text: #eef2ff;
+            --muted: #94a3b8;
+            --accent: #7c3aed;
+            --radius: 20px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        body {
+            margin: 0;
+            font-family: "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .book-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            padding: 60px 0;
+        }
+
+        .book-img {
+            background: var(--card);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .book-img img {
+            width: 100%;
+            border-radius: var(--radius);
+        }
+
+        .book-info h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .book-info p {
+            font-size: 16px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .icons {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .icon-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card);
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .icon-row span {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .cta {
+            margin-top: 30px;
+        }
+
+        .cta button {
+            background: var(--accent);
+            color: #fff;
+            padding: 14px 28px;
+            border: none;
+            font-size: 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .cta button:hover {
+            opacity: 0.8;
+        }
+
+        .payment-section {
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .payment-section h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .payments {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .pay-card {
+            background: var(--card);
+            padding: 20px 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            font-size: 16px;
+        }
+
+        @media(max-width:900px) {
+            .book-hero {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Ox-Book</h1>
+        </header>
+
+        <section class="book-hero">
+            <div class="book-img">
+                <img src="https://images.pexels.com/photos/261909/pexels-photo-261909.jpeg" alt="Livre premium" />
+            </div>
+
+            <div class="book-info">
+                <h2>Le Pouvoir de Devenir Illimités</h2>
+                <p>
+                    Un e-book premium conçu pour transformer votre vision, débloquer votre potentiel
+                    et accélérer votre réussite. Illustré, structuré et écrit dans un format moderne
+                    pour une lisibilité parfaite.
+                </p>
+
+                <div class="icons">
+                    <div class="icon-row">⚡ <span>Lecture rapide & synthétique</span></div>
+                    <div class="icon-row">📘 <span>Format ox-book optimisé</span></div>
+                    <div class="icon-row">🎧 <span>Version audio incluse</span></div>
+                    <div class="icon-row">⭐ <span>5k+ avis positifs</span></div>
+                </div>
+
+                <div class="cta">
+                    <button>Acheter maintenant</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="payment-section">
+            <h3>Moyens de paiement disponibles</h3>
+            <div class="payments">
+                <div class="pay-card">💳 Visa</div>
+                <div class="pay-card">💳 MasterCard</div>
+                <div class="pay-card">💳 Carte prépayée</div>
+                <div class="pay-card">📱 MoMo</div>
+                <div class="pay-card">🌊 Wave</div>
+                <div class="pay-card">🟧 Orange Money</div>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>
