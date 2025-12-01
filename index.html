@@ -14,6 +14,21 @@
 </head>
 
 <body>
+    <div id="divWelcome">
+        <div class="welcome-box">
+            <h2>Bienvenue sur <span>ABS Market</span></h2>
+            <p>
+                Le leader de la vente de produits en ligne au Bénin et partout en Afrique.
+            </p>
+
+            <button class="welcome-btn" id="btnVisitProductsx">
+                <i class="icon-arrow">➜</i>
+                Visitez nos produits
+            </button>
+
+        </div>
+    </div>
+
     <div class="welcome" id="welcome">
         <div class="logo-circle"> <img src="img/absmarket_logo.jpg" alt=""
                 style="width: 23vh; height: 23vh; border-radius: 100%;">
@@ -110,7 +125,7 @@
             </div>
 
             <nav class="nav" id="drawerNav">
-                <a href="index.html">Accueil</a>
+                <a href="index.html?id=1">Accueil</a>
                 <a href="apropos.html">À propos</a>
                 <a href="services.html">Nos services</a>
                 <a href="termes.html">Termes et conditions</a>
@@ -1023,6 +1038,53 @@
                 // Remplir le bandeau marquee premium
                 announcementText.textContent = "📢 " + txt + " • ";
             }
+        });
+        // Durée 5 minutes
+        const WELCOME_TIMEOUT = 5 * 60 * 1000;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const divWelcome = document.getElementById("divWelcome");
+            const btnVisit = document.getElementById("btnVisitProducts");
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const isIndexId1 = urlParams.get("id") === "1";
+
+            const hideTimestamp = localStorage.getItem("welcomeHiddenAt");
+            const blockId1 = localStorage.getItem("blockId1");
+            const now = Date.now();
+
+            // --- Vérification expiration du timer ---
+            if (hideTimestamp && now - parseInt(hideTimestamp, 10) >= WELCOME_TIMEOUT) {
+                localStorage.removeItem("welcomeHiddenAt");
+                localStorage.removeItem("blockId1"); // on réactive id=1 après les 5 min
+            }
+
+            // --- PRIORITÉ 1 : si id=1 ET blockId1 n'existe pas -->
+            //     ALORS afficher absolument
+            if (isIndexId1 && !localStorage.getItem("blockId1")) {
+                divWelcome.style.display = "flex";
+                return;
+            }
+
+            // --- PRIORITÉ 2 : si timer actif -> cacher ---
+            if (hideTimestamp && now - parseInt(hideTimestamp, 10) < WELCOME_TIMEOUT) {
+                divWelcome.style.display = "none";
+                return;
+            }
+
+            // --- PRIORITÉ 3 : affichage par défaut ---
+            divWelcome.style.display = "flex";
+
+            // --- CLIC SUR "Visitez nos produits" ---
+            btnVisit.addEventListener("click", () => {
+                divWelcome.style.display = "none";
+
+                // On active le timer
+                localStorage.setItem("welcomeHiddenAt", Date.now().toString());
+
+                // On BLOQUE le comportement de ?id=1
+                localStorage.setItem("blockId1", "true");
+            });
         });
 
     </script>

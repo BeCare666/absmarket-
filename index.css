@@ -800,3 +800,193 @@
             transform: translateX(-100%);
         }
     }
+
+
+    /* ----------------------------
+   WELCOME SCREEN PREMIUM
+   Isolation totale via #divWelcome
+-----------------------------*/
+    /* --- WELCOME SCREEN FULLPAGE --- */
+    #divWelcome {
+        position: fixed;
+        inset: 0;
+        height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+
+        /* 🖼️ IMAGE BACKGROUND PREMIUM (à remplacer par ton URL) */
+        background: linear-gradient(180deg, rgba(7, 16, 40, 0.8), rgba(7, 25, 42, 0.85)),
+            url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1200') center/cover no-repeat;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        animation: fadeInWelcome .7s ease forwards;
+    }
+
+    /* --- TEXT BLOCK --- */
+    #divWelcome .welcome-text {
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #ffffff;
+        max-width: 680px;
+        line-height: 1.4;
+        opacity: 0;
+        animation: fadeUp .9s ease .3s forwards;
+        padding: 0 18px;
+    }
+
+    /* --- PREMIUM BUTTON --- */
+    #divWelcome .welcome-btn {
+        margin-top: 28px;
+        padding: 14px 28px;
+        font-size: 1.15rem;
+        font-weight: 600;
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        color: #fff;
+        background: linear-gradient(90deg, #7c3aed, #a78bfa);
+        border: none;
+        border-radius: 14px;
+
+        cursor: pointer;
+        transition: transform .25s ease, filter .25s ease, box-shadow .3s;
+
+        opacity: 0;
+        animation: fadeUp .9s ease .55s forwards;
+    }
+
+    #divWelcome .welcome-btn i {
+        font-size: 1.25rem;
+    }
+
+    /* Hover premium */
+    #divWelcome .welcome-btn:hover {
+        transform: translateY(-4px);
+        filter: brightness(1.17);
+        box-shadow: 0 10px 32px rgba(124, 58, 237, 0.35);
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes fadeInWelcome {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(35px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    /* Fade-in background */
+    @keyframes fadeInWelcome {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* BOX CENTRÉE */
+    #divWelcome .welcome-box {
+        text-align: center;
+        max-width: 520px;
+        background: transparent;
+        padding: 38px 32px;
+
+
+
+
+        animation: slideUp .7s cubic-bezier(.2, .8, .3, 1) forwards;
+    }
+
+    /* slide up */
+    @keyframes slideUp {
+        from {
+            transform: translateY(40px) scale(.95);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* TITRE */
+    #divWelcome h2 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        margin: 0 0 12px 0;
+        color: #fff;
+    }
+
+    #divWelcome h2 span {
+        background: linear-gradient(90deg, #7c3aed, #a78bfa);
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    /* MESSAGE */
+    #divWelcome p {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 1.1rem;
+        margin-bottom: 28px;
+        line-height: 1.55;
+    }
+
+    /* BOUTON PREMIUM */
+    #divWelcome .welcome-btn {
+        padding: 14px 22px;
+        border-radius: 14px;
+        font-size: 1.05rem;
+        background: linear-gradient(90deg, #7c3aed, #6d28d9);
+        border: none;
+        cursor: pointer;
+        color: white;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+
+        box-shadow: 0 10px 28px rgba(124, 58, 237, .35);
+        transition: .25s ease;
+    }
+
+    /* Icône */
+    #divWelcome .icon-arrow {
+        display: inline-block;
+        font-size: 1.3rem;
+        transition: transform .25s ease;
+    }
+
+    /* Hover effect */
+    #divWelcome .welcome-btn:hover {
+        filter: brightness(1.15);
+        transform: translateY(-3px);
+    }
+
+    #divWelcome .welcome-btn:hover .icon-arrow {
+        transform: translateX(6px);
+    }
