@@ -17,10 +17,10 @@
     <div id="divWelcome">
         <div class="welcome-box">
             <h2>Bienvenue sur <span>ABS Market</span></h2>
-            <p>
-                Le leader de la vente de produits en ligne au Bénin et partout en Afrique.
-            </p>
+            <p id="outputText">
 
+            </p>
+            <img alt="Logo ABS Market" style="height: 50vh; width: 100%;" id="outputImage">
             <button class="welcome-btn" id="btnVisitProducts">
                 <i class="icon-arrow">➜</i>
                 Visitez nos produits
@@ -208,9 +208,11 @@
     <div class="modal-backdrop" id="adminModal" style="align-items:center;justify-content:center;">
         <div class="admin-modal modal">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                <h3 style="margin:0">Admin — Gérer les produits</h3>
+                <h3 style="margin:0">Les produits</h3>
                 <div>
+                    <button class="btn ghost" id="openSimpleModal">Home édit</button>
                     <button class="btn ghost" id="closeAdmin">Fermer</button>
+
                 </div>
             </div>
 
@@ -239,6 +241,25 @@
             </div>
         </div>
     </div>
+    <!-- Bouton ouvrir modal -->
+
+    <!-- Modal -->
+    <div id="simpleModal" class="modal">
+        <div class="modal-box">
+            <button id="closeSimpleModal" class="close">×</button>
+
+            <h3>Envoyer un message</h3>
+
+            <textarea id="simpleText" placeholder="Votre message..." rows="4"></textarea>
+
+            <input type="file" id="simpleImage" accept="image/*">
+
+            <button id="sendSimpleData" class="btn primary">
+                Envoyer
+            </button>
+        </div>
+    </div>
+
     <!-- MODAL ANNONCE -->
     <div id="announcementModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
      display:none;align-items:center;justify-content:center;z-index:9999;">
@@ -337,7 +358,7 @@
             set,
             update,
             remove,
-            get
+            get,
         } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js';
 
         // ----- Remplace par ta config Firebase -----
@@ -410,6 +431,118 @@
                 if (icon === 'error') alert(message);
             }
         }
+        /* ================================
+           MODAL OPEN / CLOSE
+        ================================ */
+        const simpleModal = document.getElementById("simpleModal");
+        const openSimpleModal = document.getElementById("openSimpleModal");
+        const closeSimpleModal = document.getElementById("closeSimpleModal");
+
+        openSimpleModal.onclick = () => {
+            simpleModal.classList.add("show");
+        };
+
+        closeSimpleModal.onclick = () => {
+            simpleModal.classList.remove("show");
+        };
+
+        simpleModal.onclick = (e) => {
+            if (e.target === simpleModal) {
+                simpleModal.classList.remove("show");
+            }
+        };
+
+        /* ================================
+           FIREBASE REF (UN SEUL MESSAGE)
+        ================================ */
+
+        const simpleMessageRef = ref(db, "messages/simpleMessage");
+
+        /* ================================
+           SAVE / UPDATE MESSAGE
+        ================================ */
+        async function sendSimpleData(text, imageURL) {
+            try {
+                await set(simpleMessageRef, {
+                    text,
+                    imageURL,
+                    updatedAt: Date.now()
+                });
+
+                alert("✅ Message enregistré / mis à jour");
+            } catch (err) {
+                console.error("❌ Erreur Firebase :", err);
+            }
+        }
+
+        /* ================================
+           SEND BUTTON
+        ================================ */
+        const sendBtn = document.getElementById("sendSimpleData");
+        const textInput = document.getElementById("simpleText");
+        const imageInput = document.getElementById("simpleImage");
+
+        sendBtn.onclick = async () => {
+            const text = textInput.value.trim();
+            const file = imageInput.files[0];
+
+            if (!text && !file) {
+                alert("Ajoutez un texte ou une image");
+                return;
+            }
+
+            let imageURL = "";
+
+            // Upload image Cloudinary
+            if (file) {
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("upload_preset", "hobefsjn");
+
+                try {
+                    const res = await fetch(
+                        "https://api.cloudinary.com/v1_1/djxmuazeb/image/upload",
+                        { method: "POST", body: fd }
+                    );
+
+                    const data = await res.json();
+                    imageURL = data.secure_url || "";
+                } catch (err) {
+                    console.error("❌ Erreur upload image :", err);
+                }
+            }
+
+            await sendSimpleData(text, imageURL);
+
+            textInput.value = "";
+            imageInput.value = "";
+            simpleModal.classList.remove("show");
+        };
+
+        /* ================================
+           REALTIME READ
+        ================================ */
+        function editHome() {
+            const outputText = document.getElementById("outputText");
+            const outputImage = document.getElementById("outputImage");
+
+            onValue(simpleMessageRef, (snapshot) => {
+                if (!snapshot.exists()) return;
+
+                const data = snapshot.val();
+
+                console.log("📥 Message récupéré :", data);
+
+                if (outputText) {
+                    outputText.textContent = data.text || "";
+                }
+
+                if (outputImage && data.imageURL) {
+                    outputImage.src = data.imageURL;
+                    outputImage.style.display = "block";
+                }
+            });
+        } editHome()
 
         // Utility: escape HTML to avoid injection
         function escapeHtml(str) {
