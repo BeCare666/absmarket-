@@ -767,26 +767,50 @@
                 //if (authModal) authModal.style.display = 'none';
                 if (authModal) signUpBtn.style.display = 'none';
                 fire('Inscription réussie', 'success');
+                // Après createUserWithEmailAndPassword
+
             } catch (err) {
                 console.error(err);
                 fire(err.message || 'Erreur lors de l\'inscription', 'error');
             }
         });
 
-        // Sign in
-        if (signInBtn) signInBtn.addEventListener('click', async () => {
-            const email = authEmail ? authEmail.value.trim() : '';
-            const pass = authPassword ? authPassword.value : '';
-            if (!email || !pass) { fire('Veuillez remplir tous les champs', 'warning'); return; }
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                if (authModal) authModal.classList.remove('show');
-                fire('Connexion réussie', 'success');
-            } catch (err) {
-                console.error(err);
-                fire(err.message || 'Erreur lors de la connexion', 'error');
-            }
-        });
+// Sign in
+if (signInBtn) signInBtn.addEventListener('click', async () => {
+    const email = authEmail ? authEmail.value.trim() : '';
+    const pass = authPassword ? authPassword.value : '';
+    if (!email || !pass) { 
+        fire('Veuillez remplir tous les champs', 'warning'); 
+        return; 
+    } 
+
+    try {
+        // Connexion Firebase Auth
+        const userCred = await signInWithEmailAndPassword(auth, email, pass);
+        if (authModal) authModal.classList.remove('show');
+        fire('Connexion réussie', 'success');
+
+        // ---- Vérification / création dans la DB ----
+        const userRef = ref(db, 'users/' + userCred.user.uid);
+        const snapshot = await get(userRef);
+        if (!snapshot.exists()) {
+            // Si l'utilisateur n'existe pas encore, le créer
+            await set(userRef, {
+                uid: userCred.user.uid,
+                displayName: userCred.user.displayName || null,
+                email: userCred.user.email,
+                createdAt: Date.now()
+            });
+            console.log('Nouvel utilisateur créé dans la DB !');
+        } else {
+            console.log('Utilisateur déjà existant dans la DB, aucune création nécessaire.');
+        }
+
+    } catch (err) {
+        console.error(err);
+        fire(err.message || 'Erreur lors de la connexion', 'error');
+    }
+});
 
         // Google sign-in
         if (googleSignIn) googleSignIn.addEventListener('click', async () => {
